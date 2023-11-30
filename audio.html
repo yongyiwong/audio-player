@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #audioPlayer {
+        width: 600px;
+        margin: 0 auto;
+        background-color: #f1f3f4;
+        border-radius: 100px;
+        padding: 12px 50px;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+      }
+      #audioPlayer input[type="range"] {
+        width: 100%;
+        background: #ddd;
+        height: 5px;
+        border-radius: 5px;
+        outline: none;
+      }
+      #audioPlayer input[type="range"]::-webkit-slider-thumb {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        border-radius: 50%;
+      }
+      .actionContainer {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .volumeContainer {
+        width: 170px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .progressContainer {
+        display: flex;
+        margin-top: 10px;
+        align-items: center;
+        gap: 16px;
+      }
+      .ml-auto {
+        margin-left: auto;
+      }
+      .icon {
+        font-size: 18px;
+      }
+      button {
+        padding: 0;
+        margin: 0;
+        border: none;
+      }
+      .dropbtn {
+        cursor: pointer;
+      }
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f1f1f1;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        border-radius: 8px;
+        overflow: hidden;
+        min-width: max-content;
+      }
+      .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+      }
+      .dropdown-content a:hover {
+        background-color: #ddd;
+      }
+      .dropdown-content.show {
+        display: block;
+      }
+      .selected.show {
+        display: flex;
+        gap: 2px;
+        align-items: center;
+      }
+      .selected:hover {
+        background-color: #ddd;
+      }
+      #audioPlayer input[type="range"].muted {
+        appearance: none;
+        background-color: #808080;
+      }
+
+      #audioPlayer input[type="range"].muted::-webkit-slider-thumb {
+        appearance: none;
+        background-color: #808080;
+        width: 16px;
+        height: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="audioPlayer">
+      <audio
+        id="audio"
+        src="https://pagalfree.com/musics/128-Lutt%20Putt%20Gaya%20-%20Dunki%20128%20Kbps.mp3"
+      ></audio>
+      <div class="actionContainer">
+        <div class="volumeContainer">
+          <button data-audio="mute">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              class="mic mic-on"
+              aria-hidden="true"
+              role="img"
+              class="iconify iconify--ic"
+              preserveAspectRatio="xMidYMid meet"
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+            >
+              <path
+                fill="currentColor"
+                d="M18.5 12A4.5 4.5 0 0 0 16 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM5 9v6h4l5 5V4L9 9H5z"
+              ></path>
+            </svg>
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="20"
+              viewBox="0 -960 960 960"
+              width="20"
+              class="mic mic-off"
+            >
+              <path
+                d="M792-56 671-177q-25 16-53 27.5T560-131v-82q14-5 27.5-10t25.5-12L480-368v208L280-360H120v-240h128L56-792l56-56 736 736-56 56Zm-8-232-58-58q17-31 25.5-65t8.5-70q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 53-14.5 102T784-288ZM650-422l-90-90v-130q47 22 73.5 66t26.5 96q0 15-2.5 29.5T650-422ZM480-592 376-696l104-104v208Z"
+              />
+            </svg>
+          </button>
+          <input type="range" min="0" step="0.1" max="1" data-audio="volume" />
+        </div>
+        <button data-audio="skip-prev-10">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            aria-hidden="true"
+            role="img"
+            class="iconify iconify--ic"
+            preserveAspectRatio="xMidYMid meet"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+          >
+            <path
+              fill="currentColor"
+              d="M11.99 5V1l-5 5l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6s-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8s-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57s-.28.26-.45.33s-.37.1-.59.1s-.41-.03-.59-.1s-.33-.18-.46-.33s-.23-.34-.3-.57s-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57s.28-.26.45-.33s.37-.1.59-.1s.41.03.59.1s.33.18.46.33s.23.34.3.57s.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31s-.11-.14-.19-.17s-.16-.05-.25-.05s-.18.02-.25.05s-.14.09-.19.17s-.09.18-.12.31s-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32s.11.14.19.17s.16.05.25.05s.18-.02.25-.05s.14-.09.19-.17s.09-.19.11-.32s.04-.29.04-.48v-.97z"
+            ></path>
+          </svg>
+        </button>
+        <button data-audio="play">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 36 36"
+            fill="none"
+            width="20"
+            height="20"
+          >
+            <path
+              d="M7.5 7.2475C7.5 6.06075 8.81287 5.34399 9.81114 5.98573L26.5372 16.7382C27.4557 17.3287 27.4557 18.6713 26.5373 19.2618L9.81114 30.0143C8.81287 30.656 7.5 29.9393 7.5 28.7525V7.2475Z"
+              fill="currentColor"
+            />
+          </svg>
+        </button>
+        <button data-audio="pause">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 36 36"
+            fill="none"
+            width="20"
+            height="20"
+          >
+            <path
+              d="M21.4286 4.66667C21.4286 3.74619 22.1961 3 23.1429 3H28.2857C29.2325 3 30 3.74619 30 4.66667V31.3333C30 32.2538 29.2325 33 28.2857 33H23.1429C22.1961 33 21.4286 32.2538 21.4286 31.3333V4.66667Z"
+              fill="currentColor"
+            />
+            <path
+              d="M6 4.66667C6 3.74619 6.76751 3 7.71429 3H12.8571C13.8039 3 14.5714 3.74619 14.5714 4.66667V31.3333C14.5714 32.2538 13.8039 33 12.8571 33H7.71429C6.76751 33 6 32.2538 6 31.3333V4.66667Z"
+              fill="currentColor"
+            />
+          </svg>
+        </button>
+        <button data-audio="skip-next-10">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            aria-hidden="true"
+            role="img"
+            class="iconify iconify--ic"
+            preserveAspectRatio="xMidYMid meet"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+          >
+            <path
+              fill="currentColor"
+              d="M18 13c0 3.31-2.69 6-6 6s-6-2.69-6-6s2.69-6 6-6v4l5-5l-5-5v4c-4.42 0-8 3.58-8 8s3.58 8 8 8s8-3.58 8-8h-2z"
+            ></path>
+            <path
+              fill="currentColor"
+              d="M10.9 16v-4.27h-.09l-1.77.63v.69l1.01-.31V16zm3.42-4.22c-.18-.07-.37-.1-.59-.1s-.41.03-.59.1s-.33.18-.45.33s-.23.34-.29.57s-.1.5-.1.82v.74c0 .32.04.6.11.82s.17.42.3.57s.28.26.46.33s.37.1.59.1s.41-.03.59-.1s.33-.18.45-.33s.22-.34.29-.57s.1-.5.1-.82v-.74c0-.32-.04-.6-.11-.82s-.17-.42-.3-.57s-.29-.26-.46-.33zm.01 2.57c0 .19-.01.35-.04.48s-.06.24-.11.32s-.11.14-.19.17s-.16.05-.25.05s-.18-.02-.25-.05s-.14-.09-.19-.17s-.09-.19-.12-.32s-.04-.29-.04-.48v-.97c0-.19.01-.35.04-.48s.06-.23.12-.31s.11-.14.19-.17s.16-.05.25-.05s.18.02.25.05s.14.09.19.17s.09.18.12.31s.04.29.04.48v.97z"
+            ></path>
+          </svg>
+        </button>
+        <div class="ml-auto">
+          <div class="dropdown">
+            <button data-audio="speed-menu" class="dropbtn">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                class="menuicon"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M14.4001 3.59995C14.4001 4.92543 13.3256 5.99995 12.0001 5.99995C10.6746 5.99995 9.6001 4.92543 9.6001 3.59995C9.6001 2.27447 10.6746 1.19995 12.0001 1.19995C13.3256 1.19995 14.4001 2.27447 14.4001 3.59995ZM14.4001 12C14.4001 13.3254 13.3256 14.4 12.0001 14.4C10.6746 14.4 9.6001 13.3254 9.6001 12C9.6001 10.6745 10.6746 9.59995 12.0001 9.59995C13.3256 9.59995 14.4001 10.6745 14.4001 12ZM12.0001 22.7999C13.3256 22.7999 14.4001 21.7254 14.4001 20.4C14.4001 19.0745 13.3256 18 12.0001 18C10.6746 18 9.6001 19.0745 9.6001 20.4C9.6001 21.7254 10.6746 22.7999 12.0001 22.7999Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+            <div id="myDropdown" class="dropdown-content selected">
+              <a href="#" id="currentSpeed">Speed: Normal (1x)</a>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24"
+                viewBox="0 -960 960 960"
+                width="24"
+              >
+                <path d="M400-280v-400l200 200-200 200Z" />
+              </svg>
+            </div>
+            <div id="childDropdown" class="dropdown-content">
+              <a href="#" data-audio="speed" data-value="0.5">0.5x</a>
+              <a href="#" data-audio="speed" data-value="1.0">Normal (1x)</a>
+              <a href="#" data-audio="speed" data-value="1.25">1.25x</a>
+              <a href="#" data-audio="speed" data-value="1.5">1.5x</a>
+              <a href="#" data-audio="speed" data-value="2.0">2x</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="progressContainer">
+        <p data-audio="currentProgress">00:00</p>
+        <input type="range" min="0" max="100" value="0" data-audio="progress" />
+        <p data-audio="lenght">00:00</p>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        var audio = document.getElementById("audio");
+        var playButton = document.querySelector('[data-audio="play"]');
+        var pauseButton = document.querySelector('[data-audio="pause"]');
+        var progressBar = document.querySelector('[data-audio="progress"]');
+        var volumeBar = document.querySelector('[data-audio="volume"]');
+        var muteButton = document.querySelector('[data-audio="mute"]');
+        var skipPrevButton = document.querySelector(
+          '[data-audio="skip-prev-10"]'
+        );
+        var skipNextButton = document.querySelector(
+          '[data-audio="skip-next-10"]'
+        );
+        var currentProgress = document.querySelector(
+          '[data-audio="currentProgress"]'
+        );
+        var length = document.querySelector('[data-audio="lenght"]');
+        var speedmenu = document.querySelector('[data-audio="speed-menu"]');
+        var speedLinks = document.querySelectorAll('[data-audio="speed"]');
+        var volumeIcons = document.querySelectorAll(".mic");
+
+        volumeIcons[1].style.display = "none";
+
+        playButton.addEventListener("click", function () {
+          if (audio.paused) {
+            audio.play();
+          }
+        });
+
+        pauseButton.addEventListener("click", function () {
+          if (!audio.paused) {
+            audio.pause();
+          }
+        });
+
+        audio.addEventListener("timeupdate", function () {
+          progressBar.value = (audio.currentTime / audio.duration) * 100;
+          var minutes = Math.floor(audio.currentTime / 60);
+          var seconds = Math.floor(audio.currentTime - minutes * 60);
+          currentProgress.textContent =
+            "0" + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+        });
+
+        progressBar.addEventListener("change", function () {
+          audio.currentTime = (progressBar.value / 100) * audio.duration;
+        });
+
+        volumeBar.addEventListener("change", function () {
+          audio.volume = volumeBar.value;
+        });
+
+        muteButton.addEventListener("click", function () {
+          audio.muted = !audio.muted;
+          if (audio.muted) {
+            volumeIcons[1].style.display = "block";
+            volumeIcons[0].style.display = "none";
+            volumeBar.classList.add("muted");
+            volumeBar.value = 0;
+          } else {
+            volumeIcons[1].style.display = "none";
+            volumeIcons[0].style.display = "block";
+            volumeBar.classList.remove("muted");
+            volumeBar.value = audio.volume;
+          }
+        });
+
+        skipPrevButton.addEventListener("click", function () {
+          audio.currentTime = Math.max(0, audio.currentTime - 10);
+        });
+
+        skipNextButton.addEventListener("click", function () {
+          audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+        });
+
+        audio.addEventListener("loadedmetadata", function () {
+          var minutes = Math.floor(audio.duration / 60);
+          var seconds = Math.floor(audio.duration - minutes * 60);
+          length.textContent =
+            "0" + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+        });
+
+        audio.addEventListener("error", function () {
+          alert("An error occurred while playing the audio.");
+          console.error("please check your audio source.");
+        });
+
+        document
+          .getElementById("audioPlayer")
+          .addEventListener("dragover", function (event) {
+            event.preventDefault();
+          });
+
+        // Add an event listener for 'drop' event on the audio player
+        document
+          .getElementById("audioPlayer")
+          .addEventListener("drop", function (event) {
+            event.preventDefault();
+            var file = event.dataTransfer.files[0];
+            if (file.type.match("audio.*")) {
+              var reader = new FileReader();
+              reader.onload = function (e) {
+                audio.src = e.target.result;
+                audio.load();
+                audio.play();
+                progressBar.value = 0;
+                currentProgress.textContent = "0:00";
+              };
+              reader.readAsDataURL(file);
+            } else {
+              alert("Invalid file type. Please drop an audio file.");
+            }
+          });
+        // Add an event listener for 'click' event on the dropdown button
+        document
+          .querySelector('[data-audio="speed-menu"]')
+          .addEventListener("click", function (event) {
+            var dropdownContent = document.getElementById("myDropdown");
+            dropdownContent.classList.add("show");
+          });
+
+        // Add an event listener for 'click' event on the current speed link
+        document
+          .getElementById("currentSpeed")
+          .addEventListener("click", (event) => {
+            event.preventDefault();
+            var dropdownContent = document.getElementById("myDropdown");
+            dropdownContent.classList.remove("show");
+            document.getElementById("childDropdown").classList.add("show");
+          });
+
+        // Modify the event listeners for the speed links
+        speedLinks.forEach(function (link) {
+          link.addEventListener("click", function (e) {
+            e.preventDefault();
+            audio.playbackRate = e.target.getAttribute("data-value");
+            document.getElementById("currentSpeed").textContent =
+              "Speed: " + e.target.textContent;
+            document.getElementById("childDropdown").classList.remove("show");
+            document.getElementById("myDropdown").classList.add("show");
+          });
+        });
+
+        // Add an event listener for 'click' event on the window
+        window.addEventListener("click", function (event) {
+          var dropdown = document.getElementById("myDropdown");
+          var dropdown1 = document.getElementById("childDropdown");
+          var dropdownButton = document.querySelector(
+            '[data-audio="speed-menu"]'
+          );
+          console.log(event.target);
+          if (
+            !dropdown.contains(event.target) &&
+            !dropdownButton.contains(event.target) &&
+            !dropdown1.contains(event.target)
+          ) {
+            dropdown.classList.remove("show");
+            dropdown1?.classList.remove("show");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
